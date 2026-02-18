@@ -399,14 +399,14 @@ function ChatSettingsContent() {
       }
     >
       <div className="space-y-4">
-        <div className="flex justify-between items-center">
+        <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-3">
           <div>
             <h2 className="text-lg font-semibold">LLM Provider API Keys</h2>
             <p className="text-sm text-muted-foreground">
               Manage API keys for LLM providers used in the Archestra Chat
             </p>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 shrink-0">
             <Button
               variant="outline"
               onClick={() => syncModelsMutation.mutate()}

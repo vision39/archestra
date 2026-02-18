@@ -41,6 +41,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { useIsAuthenticated } from "@/lib/auth.hook";
 import { usePermissionMap } from "@/lib/auth.query";
@@ -216,6 +217,7 @@ const MainSideBarSection = ({
   const permittedItems = allItems.filter(
     (item) => permissionMap?.[item.url] ?? true,
   );
+  const { isMobile, setOpenMobile } = useSidebar();
 
   return (
     <>
@@ -231,7 +233,10 @@ const MainSideBarSection = ({
                     pathname.startsWith(item.url)
                   }
                 >
-                  <Link href={item.url}>
+                  <Link
+                    href={item.url}
+                    onClick={() => isMobile && setOpenMobile(false)}
+                  >
                     <item.icon className={item.iconClassName} />
                     <span>{item.title}</span>
                   </Link>
@@ -266,8 +271,11 @@ const MainSideBarSection = ({
   );
 };
 
-const FooterSideBarSection = ({ pathname }: { pathname: string }) => (
-  <SidebarFooter>
+const FooterSideBarSection = ({ pathname }: { pathname: string }) => {
+  const { isMobile, setOpenMobile } = useSidebar();
+
+  return (
+    <SidebarFooter>
     <SecurityEngineWarning />
     <DefaultCredentialsWarning />
     <SignedIn>
@@ -291,7 +299,10 @@ const FooterSideBarSection = ({ pathname }: { pathname: string }) => (
           {userItems.map((item) => (
             <SidebarMenuItem key={item.title}>
               <SidebarMenuButton asChild isActive={item.url === pathname}>
-                <Link href={item.url}>
+                <Link
+                  href={item.url}
+                  onClick={() => isMobile && setOpenMobile(false)}
+                >
                   <item.icon />
                   <span>{item.title}</span>
                 </Link>
@@ -302,7 +313,8 @@ const FooterSideBarSection = ({ pathname }: { pathname: string }) => (
       </SidebarGroupContent>
     </SignedOut>
   </SidebarFooter>
-);
+  );
+};
 
 export function AppSidebar() {
   const pathname = usePathname();

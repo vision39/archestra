@@ -1,5 +1,14 @@
+"use client";
+
+import { MoreHorizontal } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useState } from "react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 
 // Helper to determine if a tab is active
@@ -29,15 +38,27 @@ export function PageLayout({
   children,
   tabs = [],
   actionButton,
+  mobileVisibleCount = 3,
 }: {
   children: React.ReactNode;
   tabs?: { label: string; href: string }[];
   title: React.ReactNode;
   description: React.ReactNode;
   actionButton?: React.ReactNode;
+  mobileVisibleCount?: number;
 }) {
   const pathname = usePathname();
   const maxWidth = "max-w-[1680px]";
+  const [overflowOpen, setOverflowOpen] = useState(false);
+
+  // Split tabs for mobile: visible vs overflow
+  const mobileVisibleTabs = tabs.slice(0, mobileVisibleCount);
+  const mobileOverflowTabs = tabs.slice(mobileVisibleCount);
+
+  // Check if the active tab is in the overflow
+  const activeOverflowTab = mobileOverflowTabs.find((tab) =>
+    isTabActive(pathname, tab.href, tabs),
+  );
 
   return (
     <div className="flex h-full w-full flex-col">
@@ -53,26 +74,98 @@ export function PageLayout({
             {description}
           </div>
           {tabs.length > 0 && (
-            <div className="flex gap-4 mb-0 overflow-x-auto whitespace-nowrap">
-              {tabs.map((tab) => {
-                const isActive = isTabActive(pathname, tab.href, tabs);
-                return (
-                  <Link
-                    key={tab.href}
-                    href={tab.href}
-                    className={cn(
-                      "relative pb-3 text-sm font-medium transition-colors hover:text-foreground",
-                      isActive ? "text-foreground" : "text-muted-foreground",
-                    )}
-                  >
-                    {tab.label}
-                    {isActive && (
-                      <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" />
-                    )}
-                  </Link>
-                );
-              })}
-            </div>
+            <>
+              {/* Desktop: Show all tabs */}
+              <div className="hidden md:flex gap-4 mb-0 overflow-x-auto whitespace-nowrap">
+                {tabs.map((tab) => {
+                  const isActive = isTabActive(pathname, tab.href, tabs);
+                  return (
+                    <Link
+                      key={tab.href}
+                      href={tab.href}
+                      className={cn(
+                        "relative pb-3 text-sm font-medium transition-colors hover:text-foreground",
+                        isActive ? "text-foreground" : "text-muted-foreground",
+                      )}
+                    >
+                      {tab.label}
+                      {isActive && (
+                        <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" />
+                      )}
+                    </Link>
+                  );
+                })}
+              </div>
+
+              {/* Mobile: Show first N tabs + overflow dropdown */}
+              <div className="flex md:hidden gap-4 mb-0 items-center whitespace-nowrap">
+                {mobileVisibleTabs.map((tab) => {
+                  const isActive = isTabActive(pathname, tab.href, tabs);
+                  return (
+                    <Link
+                      key={tab.href}
+                      href={tab.href}
+                      className={cn(
+                        "relative pb-3 text-sm font-medium transition-colors hover:text-foreground",
+                        isActive ? "text-foreground" : "text-muted-foreground",
+                      )}
+                    >
+                      {tab.label}
+                      {isActive && (
+                        <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" />
+                      )}
+                    </Link>
+                  );
+                })}
+
+                {mobileOverflowTabs.length > 0 && (
+                  <Popover open={overflowOpen} onOpenChange={setOverflowOpen}>
+                    <PopoverTrigger asChild>
+                      <button
+                        type="button"
+                        className={cn(
+                          "relative pb-3 text-sm font-medium transition-colors hover:text-foreground flex items-center gap-1",
+                          activeOverflowTab
+                            ? "text-foreground"
+                            : "text-muted-foreground",
+                        )}
+                      >
+                        {activeOverflowTab
+                          ? activeOverflowTab.label
+                          : null}
+                        <MoreHorizontal className="h-4 w-4" />
+                        {activeOverflowTab && (
+                          <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" />
+                        )}
+                      </button>
+                    </PopoverTrigger>
+                    <PopoverContent
+                      className="w-auto p-1 flex flex-col"
+                      align="end"
+                    >
+                      {mobileOverflowTabs.map((tab) => {
+                        const isActive = isTabActive(pathname, tab.href, tabs);
+                        return (
+                          <Link
+                            key={tab.href}
+                            href={tab.href}
+                            onClick={() => setOverflowOpen(false)}
+                            className={cn(
+                              "px-3 py-2 text-sm rounded-md transition-colors hover:bg-muted",
+                              isActive
+                                ? "font-medium text-foreground bg-muted"
+                                : "text-muted-foreground",
+                            )}
+                          >
+                            {tab.label}
+                          </Link>
+                        );
+                      })}
+                    </PopoverContent>
+                  </Popover>
+                )}
+              </div>
+            </>
           )}
           {!tabs.length && <div className="mb-6" />}
         </div>
@@ -85,3 +178,4 @@ export function PageLayout({
     </div>
   );
 }
+
