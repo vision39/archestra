@@ -1,6 +1,6 @@
 "use client";
 
-import { MoreHorizontal } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
@@ -98,7 +98,7 @@ export function PageLayout({
               </div>
 
               {/* Mobile: Show first N tabs + overflow dropdown */}
-              <div className="flex md:hidden gap-4 mb-0 items-center whitespace-nowrap">
+              <div className="flex md:hidden gap-3 mb-0 items-center whitespace-nowrap overflow-x-auto">
                 {mobileVisibleTabs.map((tab) => {
                   const isActive = isTabActive(pathname, tab.href, tabs);
                   return (
@@ -119,6 +119,8 @@ export function PageLayout({
                 })}
 
                 {mobileOverflowTabs.length > 0 && (
+                  <>
+                  <div className="h-5 w-px bg-border shrink-0" />
                   <Popover open={overflowOpen} onOpenChange={setOverflowOpen}>
                     <PopoverTrigger asChild>
                       <button
@@ -132,8 +134,8 @@ export function PageLayout({
                       >
                         {activeOverflowTab
                           ? activeOverflowTab.label
-                          : null}
-                        <MoreHorizontal className="h-4 w-4" />
+                          : "More"}
+                        <ChevronDown className="h-3.5 w-3.5" />
                         {activeOverflowTab && (
                           <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" />
                         )}
@@ -163,6 +165,7 @@ export function PageLayout({
                       })}
                     </PopoverContent>
                   </Popover>
+                  </>
                 )}
               </div>
             </>
