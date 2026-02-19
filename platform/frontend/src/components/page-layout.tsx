@@ -120,51 +120,53 @@ export function PageLayout({
 
                 {mobileOverflowTabs.length > 0 && (
                   <>
-                  <div className="h-5 w-px bg-border shrink-0" />
-                  <Popover open={overflowOpen} onOpenChange={setOverflowOpen}>
-                    <PopoverTrigger asChild>
-                      <button
-                        type="button"
-                        className={cn(
-                          "relative pb-3 text-sm font-medium transition-colors hover:text-foreground flex items-center gap-1",
-                          activeOverflowTab
-                            ? "text-foreground"
-                            : "text-muted-foreground",
-                        )}
+                    <div className="h-5 w-px bg-border shrink-0" />
+                    <Popover open={overflowOpen} onOpenChange={setOverflowOpen}>
+                      <PopoverTrigger asChild>
+                        <button
+                          type="button"
+                          className={cn(
+                            "relative pb-3 text-sm font-medium transition-colors hover:text-foreground flex items-center gap-1",
+                            activeOverflowTab
+                              ? "text-foreground"
+                              : "text-muted-foreground",
+                          )}
+                        >
+                          {activeOverflowTab ? activeOverflowTab.label : "More"}
+                          <ChevronDown className="h-3.5 w-3.5" />
+                          {activeOverflowTab && (
+                            <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" />
+                          )}
+                        </button>
+                      </PopoverTrigger>
+                      <PopoverContent
+                        className="w-auto p-1 flex flex-col"
+                        align="end"
                       >
-                        {activeOverflowTab
-                          ? activeOverflowTab.label
-                          : "More"}
-                        <ChevronDown className="h-3.5 w-3.5" />
-                        {activeOverflowTab && (
-                          <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" />
-                        )}
-                      </button>
-                    </PopoverTrigger>
-                    <PopoverContent
-                      className="w-auto p-1 flex flex-col"
-                      align="end"
-                    >
-                      {mobileOverflowTabs.map((tab) => {
-                        const isActive = isTabActive(pathname, tab.href, tabs);
-                        return (
-                          <Link
-                            key={tab.href}
-                            href={tab.href}
-                            onClick={() => setOverflowOpen(false)}
-                            className={cn(
-                              "px-3 py-2 text-sm rounded-md transition-colors hover:bg-muted",
-                              isActive
-                                ? "font-medium text-foreground bg-muted"
-                                : "text-muted-foreground",
-                            )}
-                          >
-                            {tab.label}
-                          </Link>
-                        );
-                      })}
-                    </PopoverContent>
-                  </Popover>
+                        {mobileOverflowTabs.map((tab) => {
+                          const isActive = isTabActive(
+                            pathname,
+                            tab.href,
+                            tabs,
+                          );
+                          return (
+                            <Link
+                              key={tab.href}
+                              href={tab.href}
+                              onClick={() => setOverflowOpen(false)}
+                              className={cn(
+                                "px-3 py-2 text-sm rounded-md transition-colors hover:bg-muted",
+                                isActive
+                                  ? "font-medium text-foreground bg-muted"
+                                  : "text-muted-foreground",
+                              )}
+                            >
+                              {tab.label}
+                            </Link>
+                          );
+                        })}
+                      </PopoverContent>
+                    </Popover>
                   </>
                 )}
               </div>
@@ -181,4 +183,3 @@ export function PageLayout({
     </div>
   );
 }
-

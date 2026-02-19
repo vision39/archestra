@@ -42,7 +42,9 @@ export function TablePagination({
     <>
       {/* Desktop layout */}
       <div className="hidden md:flex items-center justify-between">
-        <div className="flex-1 text-sm text-muted-foreground">{leftContent}</div>
+        <div className="flex-1 text-sm text-muted-foreground">
+          {leftContent}
+        </div>
         <div className="flex items-center gap-6 lg:gap-8">
           <div className="flex items-center gap-2">
             <p className="text-sm font-medium">Rows per page</p>
@@ -125,14 +127,18 @@ export function TablePagination({
       <div className="flex flex-col items-center gap-0 md:hidden">
         {/* Selection info - hidden when zero selected */}
         {leftContent && (
-          <div className="text-[11px] text-muted-foreground/70 mb-1.5">{leftContent}</div>
+          <div className="text-[11px] text-muted-foreground/70 mb-1.5">
+            {leftContent}
+          </div>
         )}
 
         {/* Pagination container */}
         <div className="w-full rounded-lg border bg-muted/30 px-4 py-2.5 flex flex-col items-center gap-2.5">
           {/* Rows per page */}
           <div className="flex items-center gap-2">
-            <p className="text-xs font-medium text-muted-foreground">Rows per page</p>
+            <p className="text-xs font-medium text-muted-foreground">
+              Rows per page
+            </p>
             <Select
               value={`${pageSize}`}
               onValueChange={(value) =>

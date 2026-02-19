@@ -244,7 +244,9 @@ function UrlReplacementRow({
           {originalUrl}
         </CodeText>
       </div>
-      <span className="text-muted-foreground flex-shrink-0 text-center md:text-left">→</span>
+      <span className="text-muted-foreground flex-shrink-0 text-center md:text-left">
+        →
+      </span>
       <div className="bg-primary/5 rounded-md px-3 py-2 border border-primary/20 flex items-center gap-2 min-w-0 max-w-full overflow-hidden">
         <CodeText className="text-xs text-primary flex-1 break-all min-w-0">
           {newUrl}

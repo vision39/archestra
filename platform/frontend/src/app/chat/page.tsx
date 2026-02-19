@@ -39,6 +39,12 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
   Empty,
   EmptyContent,
   EmptyDescription,
@@ -46,13 +52,6 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { cn } from "@/lib/utils";
 import { Version } from "@/components/version";
 import { useChatSession } from "@/contexts/global-chat-context";
 import { useInternalAgents } from "@/lib/agent.query";
@@ -80,6 +79,7 @@ import {
   clearPendingActions,
   getPendingActions,
 } from "@/lib/pending-tool-state";
+import { cn } from "@/lib/utils";
 import ArchestraPromptInput from "./prompt-input";
 
 const CONVERSATION_QUERY_PARAM = "conversation";
@@ -1207,13 +1207,22 @@ export default function ChatPage() {
           </div>
 
           {/* Mobile: Inline artifact/browser panels below header */}
-          {(isArtifactOpen || (isBrowserPanelOpen && isBrowserStreamingEnabled && !isPlaywrightSetupVisible)) && (
+          {(isArtifactOpen ||
+            (isBrowserPanelOpen &&
+              isBrowserStreamingEnabled &&
+              !isPlaywrightSetupVisible)) && (
             <div className="flex-1 flex flex-col min-h-0 overflow-hidden md:hidden">
               {isArtifactOpen && (
-                <div className={cn(
-                  "min-h-0 overflow-auto",
-                  isBrowserPanelOpen && isBrowserStreamingEnabled && !isPlaywrightSetupVisible ? "h-1/2 border-b" : "flex-1",
-                )}>
+                <div
+                  className={cn(
+                    "min-h-0 overflow-auto",
+                    isBrowserPanelOpen &&
+                      isBrowserStreamingEnabled &&
+                      !isPlaywrightSetupVisible
+                      ? "h-1/2 border-b"
+                      : "flex-1",
+                  )}
+                >
                   <ConversationArtifactPanel
                     artifact={conversation?.artifact}
                     isOpen={isArtifactOpen}
@@ -1222,31 +1231,45 @@ export default function ChatPage() {
                   />
                 </div>
               )}
-              {isBrowserPanelOpen && isBrowserStreamingEnabled && !isPlaywrightSetupVisible && (
-                <div className={cn(
-                  "min-h-0 overflow-auto",
-                  isArtifactOpen ? "h-1/2" : "flex-1",
-                )}>
-                  <BrowserPanel
-                    isOpen={true}
-                    onClose={closeBrowserPanel}
-                    conversationId={conversationId}
-                    agentId={browserToolsAgentId}
-                    onCreateConversationWithUrl={handleCreateConversationWithUrl}
-                    isCreatingConversation={createConversationMutation.isPending}
-                    initialNavigateUrl={pendingBrowserUrl}
-                    onInitialNavigateComplete={handleInitialNavigateComplete}
-                  />
-                </div>
-              )}
+              {isBrowserPanelOpen &&
+                isBrowserStreamingEnabled &&
+                !isPlaywrightSetupVisible && (
+                  <div
+                    className={cn(
+                      "min-h-0 overflow-auto",
+                      isArtifactOpen ? "h-1/2" : "flex-1",
+                    )}
+                  >
+                    <BrowserPanel
+                      isOpen={true}
+                      onClose={closeBrowserPanel}
+                      conversationId={conversationId}
+                      agentId={browserToolsAgentId}
+                      onCreateConversationWithUrl={
+                        handleCreateConversationWithUrl
+                      }
+                      isCreatingConversation={
+                        createConversationMutation.isPending
+                      }
+                      initialNavigateUrl={pendingBrowserUrl}
+                      onInitialNavigateComplete={handleInitialNavigateComplete}
+                    />
+                  </div>
+                )}
             </div>
           )}
 
           {/* Chat content - hidden on mobile when panels are open */}
-          <div className={cn(
-            "flex-1 overflow-y-auto relative",
-            (isArtifactOpen || (isBrowserPanelOpen && isBrowserStreamingEnabled && !isPlaywrightSetupVisible)) && "hidden md:block",
-          )}>
+          <div
+            className={cn(
+              "flex-1 overflow-y-auto relative",
+              (isArtifactOpen ||
+                (isBrowserPanelOpen &&
+                  isBrowserStreamingEnabled &&
+                  !isPlaywrightSetupVisible)) &&
+                "hidden md:block",
+            )}
+          >
             {isPlaywrightSetupRequired && !conversationId && (
               <PlaywrightInstallDialog
                 agentId={playwrightSetupAgentId}
@@ -1436,8 +1459,6 @@ export default function ChatPage() {
         />
       </div>
 
-
-
       <CustomServerRequestDialog
         isOpen={isDialogOpened("custom-request")}
         onClose={() => closeDialog("custom-request")}
@@ -1461,8 +1482,6 @@ export default function ChatPage() {
         }
         agentType="agent"
       />
-
-
 
       <PromptVersionHistoryDialog
         open={!!versionHistoryAgent}

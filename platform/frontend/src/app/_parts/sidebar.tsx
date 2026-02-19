@@ -276,43 +276,43 @@ const FooterSideBarSection = ({ pathname }: { pathname: string }) => {
 
   return (
     <SidebarFooter>
-    <SecurityEngineWarning />
-    <DefaultCredentialsWarning />
-    <SignedIn>
-      <SidebarGroup className="mt-auto">
-        <SidebarGroupContent>
-          <div data-testid={E2eTestId.SidebarUserProfile}>
-            <UserButton
-              size="default"
-              align="center"
-              className="w-full bg-transparent hover:bg-transparent text-foreground"
-              disableDefaultLinks
-            />
-          </div>
+      <SecurityEngineWarning />
+      <DefaultCredentialsWarning />
+      <SignedIn>
+        <SidebarGroup className="mt-auto">
+          <SidebarGroupContent>
+            <div data-testid={E2eTestId.SidebarUserProfile}>
+              <UserButton
+                size="default"
+                align="center"
+                className="w-full bg-transparent hover:bg-transparent text-foreground"
+                disableDefaultLinks
+              />
+            </div>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SignedIn>
+      <SignedOut>
+        <SidebarGroupContent className="mb-4">
+          <SidebarGroupLabel>User</SidebarGroupLabel>
+          <SidebarMenu>
+            {userItems.map((item) => (
+              <SidebarMenuItem key={item.title}>
+                <SidebarMenuButton asChild isActive={item.url === pathname}>
+                  <Link
+                    href={item.url}
+                    onClick={() => isMobile && setOpenMobile(false)}
+                  >
+                    <item.icon />
+                    <span>{item.title}</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            ))}
+          </SidebarMenu>
         </SidebarGroupContent>
-      </SidebarGroup>
-    </SignedIn>
-    <SignedOut>
-      <SidebarGroupContent className="mb-4">
-        <SidebarGroupLabel>User</SidebarGroupLabel>
-        <SidebarMenu>
-          {userItems.map((item) => (
-            <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton asChild isActive={item.url === pathname}>
-                <Link
-                  href={item.url}
-                  onClick={() => isMobile && setOpenMobile(false)}
-                >
-                  <item.icon />
-                  <span>{item.title}</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          ))}
-        </SidebarMenu>
-      </SidebarGroupContent>
-    </SignedOut>
-  </SidebarFooter>
+      </SignedOut>
+    </SidebarFooter>
   );
 };
 
