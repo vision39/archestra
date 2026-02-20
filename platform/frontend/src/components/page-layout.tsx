@@ -4,6 +4,7 @@ import { ChevronDown } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
 import {
   Popover,
   PopoverContent,
@@ -123,10 +124,10 @@ export function PageLayout({
                     <div className="h-5 w-px bg-border shrink-0" />
                     <Popover open={overflowOpen} onOpenChange={setOverflowOpen}>
                       <PopoverTrigger asChild>
-                        <button
-                          type="button"
+                        <Button
+                          variant="ghost"
                           className={cn(
-                            "relative pb-3 text-sm font-medium transition-colors hover:text-foreground flex items-center gap-1",
+                            "relative pb-3 px-1 h-auto rounded-none text-sm font-medium transition-colors hover:text-foreground hover:bg-transparent flex items-center gap-1",
                             activeOverflowTab
                               ? "text-foreground"
                               : "text-muted-foreground",
@@ -137,7 +138,7 @@ export function PageLayout({
                           {activeOverflowTab && (
                             <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" />
                           )}
-                        </button>
+                        </Button>
                       </PopoverTrigger>
                       <PopoverContent
                         className="w-auto p-1 flex flex-col"
