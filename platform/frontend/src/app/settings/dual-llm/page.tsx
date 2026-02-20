@@ -195,7 +195,8 @@ function DualLLMContent({
     <LoadingWrapper isPending={isPending} loadingFallback={<LoadingSpinner />}>
       <div>
         <div className="space-y-6">
-          <Collapsible className="bg-card rounded-lg p-4 shadow-sm">
+          {/* Mobile: Collapsible "How it works" */}
+          <Collapsible className="bg-card rounded-lg p-4 shadow-sm md:hidden">
             <CollapsibleTrigger className="flex w-full items-center justify-between cursor-pointer group">
               <h2 className="text-lg font-semibold">How it works</h2>
               <ChevronDown className="h-5 w-5 text-muted-foreground transition-transform duration-200 group-data-[state=open]:rotate-180" />
@@ -247,25 +248,25 @@ function DualLLMContent({
                   @keyframes flashRed {
                     0% { box-shadow: 0 0 0 0 rgba(239,68,68,0); }
                     0.5% { box-shadow: 0 0 20px 6px rgba(239,68,68,0.6); }
-                    4% { box-shadow: 0 0 0 0 rgba(239,68,68,0); }
+                    10.5% { box-shadow: 0 0 0 0 rgba(239,68,68,0); }
                     100% { box-shadow: 0 0 0 0 rgba(239,68,68,0); }
                   }
                   @keyframes flashYellow {
                     0%, 20.5% { box-shadow: 0 0 0 0 rgba(234,179,8,0); }
                     21% { box-shadow: 0 0 20px 6px rgba(234,179,8,0.6); }
-                    25% { box-shadow: 0 0 0 0 rgba(234,179,8,0); }
+                    30.5% { box-shadow: 0 0 0 0 rgba(234,179,8,0); }
                     100% { box-shadow: 0 0 0 0 rgba(234,179,8,0); }
                   }
                   @keyframes flashGreen {
                     0%, 48.5% { box-shadow: 0 0 0 0 rgba(34,197,94,0); }
                     49% { box-shadow: 0 0 20px 6px rgba(34,197,94,0.6); }
-                    53% { box-shadow: 0 0 0 0 rgba(34,197,94,0); }
+                    58.5% { box-shadow: 0 0 0 0 rgba(34,197,94,0); }
                     100% { box-shadow: 0 0 0 0 rgba(34,197,94,0); }
                   }
                   @keyframes flashOutput {
                     0%, 76.5% { box-shadow: 0 0 0 0 rgba(34,197,94,0); }
                     77% { box-shadow: 0 0 20px 6px rgba(34,197,94,0.6); }
-                    81% { box-shadow: 0 0 0 0 rgba(34,197,94,0); }
+                    86.5% { box-shadow: 0 0 0 0 rgba(34,197,94,0); }
                     100% { box-shadow: 0 0 0 0 rgba(34,197,94,0); }
                   }
                 `}</style>
@@ -380,192 +381,212 @@ function DualLLMContent({
                     </span>
                   </div>
                 </div>
-
-                {/* Desktop: Horizontal animated layout */}
-                <div className="hidden md:flex items-center justify-between gap-8">
-                  <div className="flex flex-col items-center z-10">
-                    <div className="w-24 h-24 rounded-full bg-red-50 dark:bg-red-950/30 flex items-center justify-center border-2 border-red-300 dark:border-red-800 relative">
-                      <span className="text-2xl">🔴</span>
-                      {particles.length > 0 && (
-                        <div className="absolute inset-0 rounded-full animate-pulse bg-red-500/5" />
-                      )}
-                    </div>
-                    <span className="mt-3 font-medium text-sm">
-                      Tool Result
-                    </span>
-                    <span className="text-xs text-muted-foreground">
-                      Unsafe Data
-                    </span>
-                  </div>
-
-                  <div className="flex-1 relative">
-                    <div className="h-0.5 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 opacity-50 absolute top-[40%] w-full" />
-                    {particles
-                      .filter((p) => p.path === "tool-to-quarantine")
-                      .map((particle) => {
-                        const pos = getParticlePosition(
-                          particle.path,
-                          particle.progress,
-                        );
-                        const opacity = Math.min(
-                          1,
-                          Math.min(
-                            particle.progress / 10,
-                            (100 - particle.progress) / 10,
-                          ),
-                        );
-
-                        return (
-                          <div
-                            key={particle.id}
-                            className="absolute -translate-x-1/2 -translate-y-1/2 transition-opacity duration-300"
-                            style={{
-                              ...pos,
-                              opacity,
-                            }}
-                          >
-                            <div className="relative">
-                              <div className="w-3 h-3 rounded-full bg-red-500 shadow-lg shadow-red-500/50" />
-                              <div className="absolute inset-0 rounded-full bg-red-400 animate-ping" />
-                            </div>
-                          </div>
-                        );
-                      })}
-                  </div>
-
-                  <div className="flex flex-col items-center z-10">
-                    <div className="w-24 h-24 rounded-full bg-yellow-50 dark:bg-yellow-950/30 flex items-center justify-center border-2 border-yellow-300 dark:border-yellow-800 relative">
-                      <span className="text-2xl">🔒</span>
-                      {particles.length > 0 && (
-                        <div className="absolute inset-0 rounded-full animate-pulse bg-yellow-500/5" />
-                      )}
-                    </div>
-                    <span className="mt-3 font-medium text-sm">
-                      Quarantined LLM
-                    </span>
-                    <span className="text-xs text-muted-foreground">
-                      Restricted
-                    </span>
-                  </div>
-
-                  <div className="flex-1 relative">
-                    <div className="h-0.5 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 opacity-50 absolute top-[40%] w-full" />
-                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-xs text-muted-foreground bg-card px-2 py-1 rounded border border-border z-10">
-                      N rounds Q&A
-                    </div>
-                    {particles
-                      .filter((p) => p.path === "quarantine-to-main")
-                      .map((particle) => {
-                        const pos = getParticlePosition(
-                          particle.path,
-                          particle.progress,
-                        );
-                        const opacity = Math.min(
-                          1,
-                          Math.min(
-                            particle.progress / 10,
-                            (100 - particle.progress) / 10,
-                          ),
-                        );
-
-                        return (
-                          <div
-                            key={particle.id}
-                            className="absolute -translate-x-1/2 -translate-y-1/2 transition-opacity duration-300"
-                            style={{
-                              ...pos,
-                              opacity,
-                            }}
-                          >
-                            <div className="relative">
-                              <div
-                                className={`w-3 h-3 rounded-full ${
-                                  particle.direction === "forward"
-                                    ? "bg-yellow-500 shadow-lg shadow-yellow-500/50"
-                                    : "bg-green-500 shadow-lg shadow-green-500/50"
-                                }`}
-                              />
-                              <div
-                                className={`absolute inset-0 rounded-full ${
-                                  particle.direction === "forward"
-                                    ? "bg-yellow-400"
-                                    : "bg-green-400"
-                                } animate-ping`}
-                              />
-                            </div>
-                          </div>
-                        );
-                      })}
-                  </div>
-
-                  <div className="flex flex-col items-center z-10">
-                    <div className="w-24 h-24 rounded-full bg-green-50 dark:bg-green-950/30 flex items-center justify-center border-2 border-green-300 dark:border-green-800 relative">
-                      <span className="text-2xl">✅</span>
-                      {particles.length > 0 && (
-                        <div className="absolute inset-0 rounded-full animate-pulse bg-green-500/5" />
-                      )}
-                    </div>
-                    <span className="mt-3 font-medium text-sm">Main LLM</span>
-                    <span className="text-xs text-muted-foreground">
-                      Privileged
-                    </span>
-                  </div>
-
-                  <div className="flex-1 relative">
-                    <div className="h-0.5 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 opacity-50 absolute top-[40%] w-full" />
-                    {particles
-                      .filter((p) => p.path === "main-to-output")
-                      .map((particle) => {
-                        const pos = getParticlePosition(
-                          particle.path,
-                          particle.progress,
-                        );
-                        const opacity = Math.min(
-                          1,
-                          Math.min(
-                            particle.progress / 10,
-                            (100 - particle.progress) / 10,
-                          ),
-                        );
-
-                        return (
-                          <div
-                            key={particle.id}
-                            className="absolute -translate-x-1/2 -translate-y-1/2 transition-opacity duration-300"
-                            style={{
-                              ...pos,
-                              opacity,
-                            }}
-                          >
-                            <div className="relative">
-                              <div className="w-3 h-3 rounded-full bg-green-500 shadow-lg shadow-green-500/50" />
-                              <div className="absolute inset-0 rounded-full bg-green-400 animate-ping" />
-                            </div>
-                          </div>
-                        );
-                      })}
-                  </div>
-
-                  <div className="flex flex-col items-center z-10">
-                    <div className="w-24 h-24 rounded-full bg-green-50 dark:bg-green-950/30 flex items-center justify-center border-2 border-green-300 dark:border-green-800">
-                      <span className="text-2xl">✅</span>
-                    </div>
-                    <span className="mt-3 font-medium text-sm">Output</span>
-                    <span className="text-xs text-muted-foreground">
-                      Safe Result
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-6 text-sm text-muted-foreground">
-                <p>
-                  Integer indices only. No context exchanged directly between
-                  agents.
-                </p>
               </div>
             </CollapsibleContent>
           </Collapsible>
+
+          {/* Desktop: Always-visible "How it works" */}
+          <div className="hidden md:block bg-card rounded-lg p-8 shadow-sm">
+            <h2 className="text-lg font-semibold mb-2">How it works</h2>
+            <p className="text-sm text-muted-foreground mb-6">
+              The Dual LLM quarantine pattern protects your main agent from
+              prompt injection attacks by isolating untrusted data in a separate
+              agent that can only respond via structured multiple choice
+              answers.{" "}
+              <a
+                href="https://archestra.ai/docs/platform-dual-llm"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary hover:underline"
+              >
+                Read the docs →
+              </a>
+            </p>
+
+            <div className="relative">
+              {/* Desktop: Horizontal animated layout */}
+              <div className="flex items-center justify-between gap-8">
+                <div className="flex flex-col items-center z-10">
+                  <div className="w-24 h-24 rounded-full bg-red-50 dark:bg-red-950/30 flex items-center justify-center border-2 border-red-300 dark:border-red-800 relative">
+                    <span className="text-2xl">🔴</span>
+                    {particles.length > 0 && (
+                      <div className="absolute inset-0 rounded-full animate-pulse bg-red-500/5" />
+                    )}
+                  </div>
+                  <span className="mt-3 font-medium text-sm">Tool Result</span>
+                  <span className="text-xs text-muted-foreground">
+                    Unsafe Data
+                  </span>
+                </div>
+
+                <div className="flex-1 relative">
+                  <div className="h-0.5 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 opacity-50 absolute top-[40%] w-full" />
+                  {particles
+                    .filter((p) => p.path === "tool-to-quarantine")
+                    .map((particle) => {
+                      const pos = getParticlePosition(
+                        particle.path,
+                        particle.progress,
+                      );
+                      const opacity = Math.min(
+                        1,
+                        Math.min(
+                          particle.progress / 10,
+                          (100 - particle.progress) / 10,
+                        ),
+                      );
+
+                      return (
+                        <div
+                          key={particle.id}
+                          className="absolute -translate-x-1/2 -translate-y-1/2 transition-opacity duration-300"
+                          style={{
+                            ...pos,
+                            opacity,
+                          }}
+                        >
+                          <div className="relative">
+                            <div className="w-3 h-3 rounded-full bg-red-500 shadow-lg shadow-red-500/50" />
+                            <div className="absolute inset-0 rounded-full bg-red-400 animate-ping" />
+                          </div>
+                        </div>
+                      );
+                    })}
+                </div>
+
+                <div className="flex flex-col items-center z-10">
+                  <div className="w-24 h-24 rounded-full bg-yellow-50 dark:bg-yellow-950/30 flex items-center justify-center border-2 border-yellow-300 dark:border-yellow-800 relative">
+                    <span className="text-2xl">🔒</span>
+                    {particles.length > 0 && (
+                      <div className="absolute inset-0 rounded-full animate-pulse bg-yellow-500/5" />
+                    )}
+                  </div>
+                  <span className="mt-3 font-medium text-sm">
+                    Quarantined LLM
+                  </span>
+                  <span className="text-xs text-muted-foreground">
+                    Restricted
+                  </span>
+                </div>
+
+                <div className="flex-1 relative">
+                  <div className="h-0.5 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 opacity-50 absolute top-[40%] w-full" />
+                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-xs text-muted-foreground bg-card px-2 py-1 rounded border border-border z-10">
+                    N rounds Q&A
+                  </div>
+                  {particles
+                    .filter((p) => p.path === "quarantine-to-main")
+                    .map((particle) => {
+                      const pos = getParticlePosition(
+                        particle.path,
+                        particle.progress,
+                      );
+                      const opacity = Math.min(
+                        1,
+                        Math.min(
+                          particle.progress / 10,
+                          (100 - particle.progress) / 10,
+                        ),
+                      );
+
+                      return (
+                        <div
+                          key={particle.id}
+                          className="absolute -translate-x-1/2 -translate-y-1/2 transition-opacity duration-300"
+                          style={{
+                            ...pos,
+                            opacity,
+                          }}
+                        >
+                          <div className="relative">
+                            <div
+                              className={`w-3 h-3 rounded-full ${
+                                particle.direction === "forward"
+                                  ? "bg-yellow-500 shadow-lg shadow-yellow-500/50"
+                                  : "bg-green-500 shadow-lg shadow-green-500/50"
+                              }`}
+                            />
+                            <div
+                              className={`absolute inset-0 rounded-full ${
+                                particle.direction === "forward"
+                                  ? "bg-yellow-400"
+                                  : "bg-green-400"
+                              } animate-ping`}
+                            />
+                          </div>
+                        </div>
+                      );
+                    })}
+                </div>
+
+                <div className="flex flex-col items-center z-10">
+                  <div className="w-24 h-24 rounded-full bg-green-50 dark:bg-green-950/30 flex items-center justify-center border-2 border-green-300 dark:border-green-800 relative">
+                    <span className="text-2xl">✅</span>
+                    {particles.length > 0 && (
+                      <div className="absolute inset-0 rounded-full animate-pulse bg-green-500/5" />
+                    )}
+                  </div>
+                  <span className="mt-3 font-medium text-sm">Main LLM</span>
+                  <span className="text-xs text-muted-foreground">
+                    Privileged
+                  </span>
+                </div>
+
+                <div className="flex-1 relative">
+                  <div className="h-0.5 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 opacity-50 absolute top-[40%] w-full" />
+                  {particles
+                    .filter((p) => p.path === "main-to-output")
+                    .map((particle) => {
+                      const pos = getParticlePosition(
+                        particle.path,
+                        particle.progress,
+                      );
+                      const opacity = Math.min(
+                        1,
+                        Math.min(
+                          particle.progress / 10,
+                          (100 - particle.progress) / 10,
+                        ),
+                      );
+
+                      return (
+                        <div
+                          key={particle.id}
+                          className="absolute -translate-x-1/2 -translate-y-1/2 transition-opacity duration-300"
+                          style={{
+                            ...pos,
+                            opacity,
+                          }}
+                        >
+                          <div className="relative">
+                            <div className="w-3 h-3 rounded-full bg-green-500 shadow-lg shadow-green-500/50" />
+                            <div className="absolute inset-0 rounded-full bg-green-400 animate-ping" />
+                          </div>
+                        </div>
+                      );
+                    })}
+                </div>
+
+                <div className="flex flex-col items-center z-10">
+                  <div className="w-24 h-24 rounded-full bg-green-50 dark:bg-green-950/30 flex items-center justify-center border-2 border-green-300 dark:border-green-800">
+                    <span className="text-2xl">✅</span>
+                  </div>
+                  <span className="mt-3 font-medium text-sm">Output</span>
+                  <span className="text-xs text-muted-foreground">
+                    Safe Result
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-6 text-sm text-muted-foreground">
+              <p>
+                Integer indices only. No context exchanged directly between
+                agents.
+              </p>
+            </div>
+          </div>
+
           <div className="border border-border rounded-lg p-6 bg-card">
             <Label htmlFor="max-rounds" className="text-sm font-semibold">
               Max Quarantine Rounds
