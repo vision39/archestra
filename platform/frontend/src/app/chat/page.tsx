@@ -516,6 +516,7 @@ export default function ChatPage() {
   const stop = chatSession?.stop;
   const error = chatSession?.error;
   const addToolResult = chatSession?.addToolResult;
+  const addToolApprovalResponse = chatSession?.addToolApprovalResponse;
   const pendingCustomServerToolCall = chatSession?.pendingCustomServerToolCall;
   const setPendingCustomServerToolCall =
     chatSession?.setPendingCustomServerToolCall;
@@ -1344,6 +1345,13 @@ export default function ChatPage() {
                 }
               }}
               error={error}
+              onToolApprovalResponse={
+                addToolApprovalResponse
+                  ? ({ id, approved, reason }) => {
+                      addToolApprovalResponse({ id, approved, reason });
+                    }
+                  : undefined
+              }
             />
           </div>
 
