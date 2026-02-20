@@ -107,7 +107,7 @@ export function PageLayout({
                       key={tab.href}
                       href={tab.href}
                       className={cn(
-                        "relative pb-3 text-sm font-medium transition-colors hover:text-foreground",
+                        "relative pb-1 text-sm font-medium transition-colors hover:text-foreground",
                         isActive ? "text-foreground" : "text-muted-foreground",
                       )}
                     >
