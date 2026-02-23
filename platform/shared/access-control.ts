@@ -35,7 +35,7 @@ export const allAvailableActions: Record<Resource, Action[]> = {
   mcpToolCall: ["read"],
   conversation: ["create", "read", "update", "delete"],
   limit: ["create", "read", "update", "delete"],
-  tokenPrice: ["create", "read", "update", "delete"],
+  llmModels: ["create", "read", "update", "delete"],
   chatSettings: ["create", "read", "update", "delete"],
   /**
    * Better-auth access control resource - needed for organization role management
@@ -54,8 +54,8 @@ export const editorPermissions: Record<Resource, Action[]> = {
   tool: ["create", "read", "update", "delete"],
   policy: ["create", "read", "update", "delete"],
   interaction: ["create", "read", "update", "delete"],
-  dualLlmConfig: ["create", "read", "update", "delete"],
-  dualLlmResult: ["create", "read", "update", "delete"],
+  dualLlmConfig: ["read"],
+  dualLlmResult: ["read"],
   internalMcpCatalog: ["create", "read", "update", "delete"],
   mcpServer: ["create", "read", "update", "delete"],
   mcpServerInstallationRequest: ["create", "read", "update", "delete"],
@@ -64,7 +64,7 @@ export const editorPermissions: Record<Resource, Action[]> = {
   mcpToolCall: ["read"],
   conversation: ["create", "read", "update", "delete"],
   limit: ["create", "read", "update", "delete"],
-  tokenPrice: ["create", "read", "update", "delete"],
+  llmModels: ["create", "read", "update", "delete"],
   chatSettings: ["create", "read", "update", "delete"],
   // Empty arrays required for Record<Resource, Action[]> type compatibility
   member: [],
@@ -78,7 +78,7 @@ export const memberPermissions: Record<Resource, Action[]> = {
   mcpGateway: ["read"],
   llmProxy: ["read"],
   tool: ["create", "read", "update", "delete"],
-  policy: ["create", "read", "update", "delete"],
+  policy: ["read"],
   interaction: ["create", "read", "update", "delete"],
   dualLlmConfig: ["read"],
   dualLlmResult: ["read"],
@@ -90,7 +90,7 @@ export const memberPermissions: Record<Resource, Action[]> = {
   mcpToolCall: ["read"],
   conversation: ["create", "read", "update", "delete"],
   limit: ["read"],
-  tokenPrice: ["read"],
+  llmModels: ["read"],
   chatSettings: ["read"],
   // Empty arrays required for Record<Resource, Action[]> type compatibility
   member: [],
@@ -128,6 +128,12 @@ export const requiredEndpointPermissionsMap: Partial<
   [RouteId.CreateAgent]: {},
   [RouteId.UpdateAgent]: {},
   [RouteId.DeleteAgent]: {},
+  [RouteId.GetAgentVersions]: {
+    agent: ["read"],
+  },
+  [RouteId.RollbackAgent]: {
+    agent: ["update"],
+  },
   [RouteId.GetDefaultMcpGateway]: {
     mcpGateway: ["read"],
   },
@@ -280,6 +286,12 @@ export const requiredEndpointPermissionsMap: Partial<
   },
   [RouteId.DeleteInternalMcpCatalogItemByName]: {
     internalMcpCatalog: ["delete"],
+  },
+  [RouteId.GetInternalMcpCatalogLabelKeys]: {
+    internalMcpCatalog: ["read"],
+  },
+  [RouteId.GetInternalMcpCatalogLabelValues]: {
+    internalMcpCatalog: ["read"],
   },
   [RouteId.GetDeploymentYamlPreview]: {
     internalMcpCatalog: ["read"],
@@ -485,6 +497,18 @@ export const requiredEndpointPermissionsMap: Partial<
   [RouteId.DeleteChatApiKey]: {
     chatSettings: ["delete"],
   },
+  [RouteId.GetVirtualApiKeys]: {
+    chatSettings: ["read"],
+  },
+  [RouteId.GetAllVirtualApiKeys]: {
+    chatSettings: ["read"],
+  },
+  [RouteId.CreateVirtualApiKey]: {
+    chatSettings: ["create"],
+  },
+  [RouteId.DeleteVirtualApiKey]: {
+    chatSettings: ["delete"],
+  },
   [RouteId.GetModelsWithApiKeys]: {
     chatSettings: ["read"],
   },
@@ -555,20 +579,8 @@ export const requiredEndpointPermissionsMap: Partial<
   [RouteId.GetUserToken]: {},
   [RouteId.GetUserTokenValue]: {},
   [RouteId.RotateUserToken]: {},
-  [RouteId.GetTokenPrices]: {
-    tokenPrice: ["read"],
-  },
-  [RouteId.CreateTokenPrice]: {
-    tokenPrice: ["create"],
-  },
-  [RouteId.GetTokenPrice]: {
-    tokenPrice: ["read"],
-  },
-  [RouteId.UpdateTokenPrice]: {
-    tokenPrice: ["update"],
-  },
-  [RouteId.DeleteTokenPrice]: {
-    tokenPrice: ["delete"],
+  [RouteId.UpdateModelPricing]: {
+    llmModels: ["update"],
   },
   [RouteId.GetTeamStatistics]: {
     interaction: ["read"],
@@ -640,6 +652,9 @@ export const requiredEndpointPermissionsMap: Partial<
   [RouteId.UpdateChatOpsConfigInQuickstart]: {
     organization: ["update"],
   },
+  [RouteId.UpdateSlackChatOpsConfig]: {
+    organization: ["update"],
+  },
   [RouteId.RefreshChatOpsChannelDiscovery]: {
     organization: ["update"],
   },
@@ -674,8 +689,8 @@ export const requiredPagePermissionsMap: Record<string, Permissions> = {
     mcpToolCall: ["read"],
   },
 
-  "/tools": {
-    tool: ["read"],
+  "/tool-policies": {
+    policy: ["read"],
   },
 
   "/mcp-catalog": {
@@ -709,17 +724,20 @@ export const requiredPagePermissionsMap: Record<string, Permissions> = {
   "/settings/roles": {
     organization: ["read"],
   },
-  "/settings/appearance": {
-    organization: ["update"],
+  "/settings/security": {
+    organization: ["read"],
   },
-  "/settings/llm-api-keys": {
+  "/settings/appearance": {
+    organization: ["read"],
+  },
+  "/llm-proxies/provider-settings": {
     chatSettings: ["read"],
   },
   "/settings/identity-providers": {
     identityProvider: ["read"],
   },
   "/settings/secrets": {
-    organization: ["update"],
+    organization: ["read"],
   },
   // Agent Triggers
   "/agent-triggers/ms-teams": {
@@ -738,9 +756,6 @@ export const requiredPagePermissionsMap: Record<string, Permissions> = {
   },
   "/cost/limits": {
     limit: ["read"],
-  },
-  "/cost/token-price": {
-    tokenPrice: ["read"],
   },
   "/cost/optimization-rules": {
     llmProxy: ["read"],

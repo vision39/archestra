@@ -32,7 +32,7 @@ function getResourceDescription(resource: Resource): string {
     team: "Teams for organizing members and access control",
     conversation: "Chat conversations with automation experts",
     limit: "Usage limits and quotas",
-    tokenPrice: "Token pricing configuration",
+    llmModels: "LLM models and pricing configuration",
     chatSettings: "Chat feature configuration and settings",
     ac: "RBAC roles",
   };
@@ -180,6 +180,10 @@ Combine roles with team-based access control for fine-grained resource access:
 1. **Create teams** for different groups (e.g., "Data Scientists", "Developers")
 2. **Assign agents and MCP servers** to specific teams
 3. **Add members to teams** based on their role and responsibilities
+
+#### Default Team
+
+New members are automatically added to the "Default Team" when they accept an invitation. This ensures all users have immediate access to Archestra resources assigned to this team.
 
 #### Team Access Control Rules
 

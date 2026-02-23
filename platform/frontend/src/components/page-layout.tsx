@@ -2,7 +2,7 @@
 
 import { ChevronDown } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,7 +15,7 @@ import { cn } from "@/lib/utils";
 // Helper to determine if a tab is active
 // Sort tabs by href length descending so we match the most specific first
 function isTabActive(
-  pathname: string,
+  currentUrl: string,
   tabHref: string,
   allTabs: { href: string }[],
 ) {
@@ -24,13 +24,13 @@ function isTabActive(
 
   // Find the first tab that matches
   for (const tab of sortedTabs) {
-    if (pathname === tab.href || pathname.startsWith(`${tab.href}/`)) {
+    if (currentUrl === tab.href || currentUrl.startsWith(`${tab.href}/`)) {
       return tab.href === tabHref;
     }
   }
 
   // Fallback to includes for backwards compatibility
-  return pathname.includes(tabHref);
+  return currentUrl.includes(tabHref);
 }
 
 export function PageLayout({
@@ -49,6 +49,10 @@ export function PageLayout({
   mobileVisibleCount?: number;
 }) {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const currentUrl = searchParams.toString()
+    ? `${pathname}?${searchParams.toString()}`
+    : pathname;
   const maxWidth = "max-w-[1680px]";
   const [overflowOpen, setOverflowOpen] = useState(false);
 
@@ -79,7 +83,7 @@ export function PageLayout({
               {/* Desktop: Show all tabs */}
               <div className="hidden md:flex gap-4 mb-0 overflow-x-auto whitespace-nowrap">
                 {tabs.map((tab) => {
-                  const isActive = isTabActive(pathname, tab.href, tabs);
+                  const isActive = isTabActive(currentUrl, tab.href, tabs);
                   return (
                     <Link
                       key={tab.href}
@@ -101,7 +105,7 @@ export function PageLayout({
               {/* Mobile: Show first N tabs + overflow dropdown */}
               <div className="flex md:hidden gap-3 mb-0 items-center whitespace-nowrap overflow-x-auto">
                 {mobileVisibleTabs.map((tab) => {
-                  const isActive = isTabActive(pathname, tab.href, tabs);
+                  const isActive = isTabActive(currentUrl, tab.href, tabs);
                   return (
                     <Link
                       key={tab.href}
@@ -146,7 +150,7 @@ export function PageLayout({
                       >
                         {mobileOverflowTabs.map((tab) => {
                           const isActive = isTabActive(
-                            pathname,
+                            currentUrl,
                             tab.href,
                             tabs,
                           );

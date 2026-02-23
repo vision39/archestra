@@ -4,7 +4,7 @@ import type { archestraApiTypes } from "@shared";
 import { archestraApiSdk, E2eTestId } from "@shared";
 import { useQuery } from "@tanstack/react-query";
 import type { ColumnDef, SortingState } from "@tanstack/react-table";
-import { ChevronDown, ChevronUp, Plus, Search, Tag } from "lucide-react";
+import { ChevronDown, ChevronUp, Plus, Search } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -14,6 +14,7 @@ import { AgentDialog } from "@/components/agent-dialog";
 import { PromptVersionHistoryDialog } from "@/components/chat/prompt-version-history-dialog";
 import { ConnectDialog } from "@/components/connect-dialog";
 import { DebouncedInput } from "@/components/debounced-input";
+import { LabelTags } from "@/components/label-tags";
 import { LoadingSpinner, LoadingWrapper } from "@/components/loading";
 import { PageLayout } from "@/components/page-layout";
 import { Badge } from "@/components/ui/badge";
@@ -39,6 +40,7 @@ import {
   useProfiles,
   useProfilesPaginated,
 } from "@/lib/agent.query";
+import { useHasPermissions } from "@/lib/auth.query";
 import {
   DEFAULT_AGENTS_PAGE_SIZE,
   DEFAULT_SORT_BY,
@@ -165,7 +167,7 @@ function Agents({ initialData }: { initialData?: AgentsInitialData }) {
     agentTypes: ["agent"],
   });
 
-  const { data: _teams } = useQuery({
+  const { data: teams } = useQuery({
     queryKey: ["teams"],
     queryFn: async () => {
       const { data } = await archestraApiSdk.getTeams();
@@ -173,6 +175,17 @@ function Agents({ initialData }: { initialData?: AgentsInitialData }) {
     },
     initialData: initialData?.teams,
   });
+
+  const { data: isAgentAdmin } = useHasPermissions({
+    agent: ["admin"],
+  });
+  const { data: canCreateAgent } = useHasPermissions({
+    agent: ["create"],
+  });
+
+  // Non-admin users with no teams cannot create agents
+  const cannotCreateDueToNoTeams =
+    !isAgentAdmin && (!teams || teams.length === 0);
 
   const [searchQuery, setSearchQuery] = useState(nameFilter);
   const [sorting, setSorting] = useState<SortingState>([
@@ -282,29 +295,7 @@ function Agents({ initialData }: { initialData?: AgentsInitialData }) {
             <div className="flex items-start gap-2">
               <span className="break-words min-w-0">{agent.name}</span>
               {agent.labels && agent.labels.length > 0 && (
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <div className="inline-flex shrink-0">
-                        <Tag className="h-4 w-4 text-muted-foreground" />
-                      </div>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <div className="flex flex-wrap gap-1 max-w-xs">
-                        {agent.labels.map((label) => (
-                          <Badge
-                            key={label.key}
-                            variant="secondary"
-                            className="text-xs"
-                          >
-                            <span className="font-semibold">{label.key}:</span>
-                            <span className="ml-1">{label.value}</span>
-                          </Badge>
-                        ))}
-                      </div>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
+                <LabelTags labels={agent.labels} />
               )}
             </div>
           </div>
@@ -430,6 +421,12 @@ function Agents({ initialData }: { initialData?: AgentsInitialData }) {
             permissions={{ agent: ["create"] }}
             onClick={() => setIsCreateDialogOpen(true)}
             data-testid={E2eTestId.CreateAgentButton}
+            disabled={cannotCreateDueToNoTeams}
+            tooltip={
+              canCreateAgent && cannotCreateDueToNoTeams
+                ? "You need to be a member of at least one team to create agents"
+                : undefined
+            }
           >
             <Plus className="mr-2 h-4 w-4" />
             Create Agent

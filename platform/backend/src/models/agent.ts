@@ -33,6 +33,7 @@ import type {
 import type { ChatOpsProviderType } from "@/types/chatops";
 import AgentLabelModel from "./agent-label";
 import AgentTeamModel from "./agent-team";
+import ChatOpsChannelBindingModel from "./chatops-channel-binding";
 import ToolModel from "./tool";
 
 class AgentModel {
@@ -825,11 +826,30 @@ class AgentModel {
       await AgentLabelModel.syncAgentLabels(id, labels);
     }
 
-    // Fetch the tools for the updated agent
-    const tools = await db
-      .select()
-      .from(schema.toolsTable)
-      .where(eq(schema.toolsTable.agentId, updatedAgent.id));
+    // If allowedChatops changed, unbind the agent from removed providers
+    if (agent.allowedChatops !== undefined) {
+      const oldProviders = existingAgent.allowedChatops ?? [];
+      const newProviders = agent.allowedChatops ?? [];
+      const removedProviders = oldProviders.filter(
+        (p) => !newProviders.includes(p),
+      );
+      if (removedProviders.length > 0) {
+        await ChatOpsChannelBindingModel.unbindAgentFromProviders(
+          id,
+          removedProviders,
+        );
+      }
+    }
+
+    const toolRows = await db
+      .select({ tool: schema.toolsTable })
+      .from(schema.agentToolsTable)
+      .innerJoin(
+        schema.toolsTable,
+        eq(schema.agentToolsTable.toolId, schema.toolsTable.id),
+      )
+      .where(eq(schema.agentToolsTable.agentId, updatedAgent.id));
+    const tools = toolRows.map((row) => row.tool);
 
     // Fetch current teams and labels
     const currentTeams = await AgentTeamModel.getTeamDetailsForAgent(id);

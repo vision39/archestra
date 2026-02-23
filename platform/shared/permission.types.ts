@@ -38,7 +38,7 @@ export const resources = [
   "team",
   "conversation",
   "limit",
-  "tokenPrice",
+  "llmModels",
   "chatSettings",
   /**
    * Better-auth access control resource - needed for organization role management
@@ -49,6 +49,32 @@ export const resources = [
    */
   "ac",
 ] as const;
+
+// Human-readable labels for resources
+export const resourceLabels: Record<Resource, string> = {
+  agent: "Agents",
+  mcpGateway: "MCP Gateways",
+  llmProxy: "LLM Proxies",
+  tool: "Tools",
+  policy: "Policies",
+  interaction: "Interactions",
+  dualLlmConfig: "Dual LLM Configs",
+  dualLlmResult: "Dual LLM Results",
+  organization: "Organization",
+  identityProvider: "Identity Providers",
+  member: "Members",
+  invitation: "Invitations",
+  internalMcpCatalog: "Internal MCP Catalog",
+  mcpServer: "MCP Servers",
+  mcpServerInstallationRequest: "MCP Server Installation Requests",
+  mcpToolCall: "MCP Tool Calls",
+  team: "Teams",
+  ac: "Access Control",
+  conversation: "Conversations",
+  limit: "Limits",
+  llmModels: "LLM Models",
+  chatSettings: "Chat Settings",
+};
 
 export type Resource = (typeof resources)[number];
 export type Action = (typeof actions)[number];

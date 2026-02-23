@@ -18,16 +18,11 @@ export default function SettingsLayout({
     identityProvider: ["read"],
   });
 
-  const { data: userCanUpdateOrganization } = useHasPermissions({
-    organization: ["update"],
-  });
-
   const { data: secretsType } = useSecretsType();
 
   const tabs = [
     { label: "Your Account", href: "/settings/account" },
     { label: "Dual LLM", href: "/settings/dual-llm" },
-    { label: "LLM API Keys", href: "/settings/llm-api-keys" },
     { label: "Security", href: "/settings/security" },
     ...(userCanReadOrganization
       ? [
@@ -46,14 +41,13 @@ export default function SettingsLayout({
                 },
               ]
             : []),
-          { label: "Appearance", href: "/settings/appearance" },
         ]
       : []),
+    { label: "Appearance", href: "/settings/appearance" },
     /**
-     * Secrets tab is only shown when using Vault storage (not DB)
-     * and the user has permission to update organization settings.
+     * Secrets tab is only shown when using Vault storage (not DB).
      */
-    ...(userCanUpdateOrganization && secretsType?.type === "Vault"
+    ...(secretsType?.type === "Vault"
       ? [{ label: "Secrets", href: "/settings/secrets" }]
       : []),
   ];
