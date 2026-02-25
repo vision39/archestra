@@ -303,6 +303,9 @@ importers:
       quick-lru:
         specifier: ^7.3.0
         version: 7.3.0
+      slackify-markdown:
+        specifier: ^5.0.0
+        version: 5.0.0
       tiktoken:
         specifier: ^1.0.22
         version: 1.0.22
@@ -316,6 +319,9 @@ importers:
       '@electric-sql/pglite':
         specifier: ^0.3.15
         version: 0.3.15
+      '@microsoft/microsoft-graph-types':
+        specifier: ^2.43.1
+        version: 2.43.1
       '@sentry/cli':
         specifier: ^3.1.0
         version: 3.1.0
@@ -1958,6 +1964,9 @@ packages:
         optional: true
       stream-browserify:
         optional: true
+
+  '@microsoft/microsoft-graph-types@2.43.1':
+    resolution: {integrity: sha512-7r3FiJYW2qTWnl+Li8GV5MzJqPiJp27hvY98kH5V/ZMzGuIOkcJqOfIpusoIQrskLDfYk5kFT8AjpeW713qcIg==}
 
   '@microsoft/msgraph-sdk-chats@1.0.0-preview.77':
     resolution: {integrity: sha512-HktFFU5e1W2zJin3QB5nMEHcTm+vRop5WarDHm5fy50KVsofiWPkyET3ja1iyIHLFspO6EUMIKwSgSWZyPZD/w==}
@@ -7820,6 +7829,10 @@ packages:
     resolution: {integrity: sha512-bzyZ1e88w9O1iNJbKnOlvYTrWPDl46O1bG0D3XInv+9tkPrxrN8jUUTiFlDkkmKWgn1M6CfIA13SuGqOa9Korw==}
     engines: {node: '>=14'}
 
+  slackify-markdown@5.0.0:
+    resolution: {integrity: sha512-jTWvwjOYGAqS0NNyhTm+9H8S0/tux2anPEwyeIBCayH14jGHIrN70yj4afUYP2zq54aUwEFkASdXytjO/5GA+A==}
+    engines: {node: '>=22'}
+
   smart-buffer@4.2.0:
     resolution: {integrity: sha512-94hK0Hh8rPqQl2xXc3HsaBoOXKV20MToPkcXvwbISWLEs+64sBq5kFgn2kJDHb1Pry9yrP0dxrCI9RRci7RXKg==}
     engines: {node: '>= 6.0.0', npm: '>= 3.0.0'}
@@ -8240,6 +8253,9 @@ packages:
 
   unist-util-position@5.0.0:
     resolution: {integrity: sha512-fucsC7HjXvkB5R3kTCO7kUjRdrS0BJt3M/FPxmHMBOm8JQi2BsHAHFsy27E0EolP8rp0NzXsJ+jNPyDWvOJZPA==}
+
+  unist-util-remove@4.0.0:
+    resolution: {integrity: sha512-b4gokeGId57UVRX/eVKej5gXqGlc9+trkORhFJpu9raqZkZhU0zm8Doi05+HaiBsMEIJowL+2WtQ5ItjsngPXg==}
 
   unist-util-stringify-position@4.0.0:
     resolution: {integrity: sha512-0ASV06AAoKCDkS2+xw5RXJywruurpbC4JZSm7nr7MOt1ojAzvyyaO+UxZf18j8FCF6kmzCZKcAgN/yu2gm2XgQ==}
@@ -10475,6 +10491,8 @@ snapshots:
       tslib: 2.8.1
     optionalDependencies:
       '@azure/identity': 4.13.0
+
+  '@microsoft/microsoft-graph-types@2.43.1': {}
 
   '@microsoft/msgraph-sdk-chats@1.0.0-preview.77':
     dependencies:
@@ -17243,6 +17261,18 @@ snapshots:
 
   signal-exit@4.1.0: {}
 
+  slackify-markdown@5.0.0:
+    dependencies:
+      mdast-util-to-markdown: 2.1.2
+      remark-gfm: 4.0.1
+      remark-parse: 11.0.0
+      remark-stringify: 11.0.0
+      unified: 11.0.5
+      unist-util-remove: 4.0.0
+      unist-util-visit: 5.1.0
+    transitivePeerDependencies:
+      - supports-color
+
   smart-buffer@4.2.0: {}
 
   smol-toml@1.6.0: {}
@@ -17652,6 +17682,12 @@ snapshots:
   unist-util-position@5.0.0:
     dependencies:
       '@types/unist': 3.0.3
+
+  unist-util-remove@4.0.0:
+    dependencies:
+      '@types/unist': 3.0.3
+      unist-util-is: 6.0.1
+      unist-util-visit-parents: 6.0.2
 
   unist-util-stringify-position@4.0.0:
     dependencies:
