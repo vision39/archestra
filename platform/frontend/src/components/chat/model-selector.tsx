@@ -101,9 +101,11 @@ const providerToLogoProvider: Record<SupportedProvider, string> = {
   cohere: "cohere",
   mistral: "mistral",
   perplexity: "perplexity",
+  groq: "groq",
   vllm: "vllm",
   ollama: "ollama-cloud", // models.dev uses ollama-cloud for the Ollama provider
   zhipuai: "zhipuai",
+  minimax: "minimax",
 };
 
 /**

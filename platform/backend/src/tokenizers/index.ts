@@ -18,11 +18,13 @@ const tokenizerFactories: Record<SupportedProvider, () => Tokenizer> = {
   cohere: () => new TiktokenTokenizer(),
   mistral: () => new TiktokenTokenizer(),
   perplexity: () => new TiktokenTokenizer(),
+  groq: () => new TiktokenTokenizer(),
   vllm: () => new TiktokenTokenizer(),
   ollama: () => new TiktokenTokenizer(),
   zhipuai: () => new TiktokenTokenizer(),
   gemini: () => new TiktokenTokenizer(),
   bedrock: () => new TiktokenTokenizer(),
+  minimax: () => new TiktokenTokenizer(),
 };
 
 /**

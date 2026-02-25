@@ -12,9 +12,11 @@ export const SupportedProvidersSchema = z.enum([
   "cerebras",
   "mistral",
   "perplexity",
+  "groq",
   "vllm",
   "ollama",
   "zhipuai",
+  "minimax",
 ]);
 
 export const SupportedProvidersDiscriminatorSchema = z.enum([
@@ -26,9 +28,11 @@ export const SupportedProvidersDiscriminatorSchema = z.enum([
   "cerebras:chatCompletions",
   "mistral:chatCompletions",
   "perplexity:chatCompletions",
+  "groq:chatCompletions",
   "vllm:chatCompletions",
   "ollama:chatCompletions",
   "zhipuai:chatCompletions",
+  "minimax:chatCompletions",
 ]);
 
 export const SupportedProviders = Object.values(SupportedProvidersSchema.enum);
@@ -46,9 +50,11 @@ export const providerDisplayNames: Record<SupportedProvider, string> = {
   cerebras: "Cerebras",
   mistral: "Mistral AI",
   perplexity: "Perplexity AI",
+  groq: "Groq",
   vllm: "vLLM",
   ollama: "Ollama",
   zhipuai: "Zhipu AI",
+  minimax: "MiniMax",
 };
 
 /**
@@ -65,6 +71,19 @@ export const PERPLEXITY_MODELS = [
 ] as const;
 
 /**
+ * MiniMax model definitions — single source of truth.
+ * MiniMax does not provide a /v1/models endpoint, so models are maintained here.
+ * @see https://www.minimaxi.com/en/news
+ */
+export const MINIMAX_MODELS = [
+  { id: "MiniMax-M2", displayName: "MiniMax-M2" },
+  { id: "MiniMax-M2.1", displayName: "MiniMax-M2.1" },
+  { id: "MiniMax-M2.1-lightning", displayName: "MiniMax-M2.1-lightning" },
+  { id: "MiniMax-M2.5", displayName: "MiniMax-M2.5" },
+  { id: "MiniMax-M2.5-highspeed", displayName: "MiniMax-M2.5-highspeed" },
+] as const;
+
+/**
  * Default provider base URLs.
  * Used as placeholder hints in the UI and as fallback values when no per-key base URL is configured.
  */
@@ -77,9 +96,11 @@ export const DEFAULT_PROVIDER_BASE_URLS: Record<SupportedProvider, string> = {
   cerebras: "https://api.cerebras.ai/v1",
   mistral: "https://api.mistral.ai/v1",
   perplexity: "https://api.perplexity.ai",
+  groq: "https://api.groq.com/openai/v1",
   vllm: "",
   ollama: "http://localhost:11434/v1",
   zhipuai: "https://api.z.ai/api/paas/v4",
+  minimax: "https://api.minimax.io/v1",
 };
 
 /**
@@ -100,7 +121,7 @@ export const MODEL_MARKER_PATTERNS: Record<
   }
 > = {
   anthropic: {
-    fastest: ["haiku"],
+    fastest: ["haiku-4", "haiku"],
     best: ["opus", "sonnet"],
   },
   openai: {
@@ -128,6 +149,10 @@ export const MODEL_MARKER_PATTERNS: Record<
     fastest: ["sonar"],
     best: ["sonar-pro", "sonar-reasoning-pro", "sonar-reasoning"],
   },
+  groq: {
+    fastest: ["llama-3.1-8b", "gemma2-9b"],
+    best: ["llama-3.3-70b", "llama-3.1-70b"],
+  },
   ollama: {
     fastest: ["llama3.2", "phi"],
     best: ["llama3.1", "mixtral"],
@@ -139,6 +164,10 @@ export const MODEL_MARKER_PATTERNS: Record<
   zhipuai: {
     fastest: ["glm-4-flash", "glm-flash"],
     best: ["glm-4-plus", "glm-4"],
+  },
+  minimax: {
+    fastest: ["minimax-m2.5-highspeed", "minimax-m2.1-lightning"],
+    best: ["minimax-m2.5", "minimax-m2.1", "minimax-m2"],
   },
   bedrock: {
     fastest: ["nova-lite", "nova-micro", "haiku"],

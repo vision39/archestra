@@ -8,6 +8,8 @@ import {
   Cerebras,
   Cohere,
   Gemini,
+  Groq,
+  Minimax,
   Mistral,
   Ollama,
   OpenAi,
@@ -34,10 +36,12 @@ export const InteractionRequestSchema = z.union([
   Cerebras.API.ChatCompletionRequestSchema,
   Mistral.API.ChatCompletionRequestSchema,
   Perplexity.API.ChatCompletionRequestSchema,
+  Groq.API.ChatCompletionRequestSchema,
   Vllm.API.ChatCompletionRequestSchema,
   Ollama.API.ChatCompletionRequestSchema,
   Cohere.API.ChatRequestSchema,
   Zhipuai.API.ChatCompletionRequestSchema,
+  Minimax.API.ChatCompletionRequestSchema,
 ]);
 
 export const InteractionResponseSchema = z.union([
@@ -48,10 +52,12 @@ export const InteractionResponseSchema = z.union([
   Cerebras.API.ChatCompletionResponseSchema,
   Mistral.API.ChatCompletionResponseSchema,
   Perplexity.API.ChatCompletionResponseSchema,
+  Groq.API.ChatCompletionResponseSchema,
   Vllm.API.ChatCompletionResponseSchema,
   Ollama.API.ChatCompletionResponseSchema,
   Cohere.API.ChatResponseSchema,
   Zhipuai.API.ChatCompletionResponseSchema,
+  Minimax.API.ChatCompletionResponseSchema,
 ]);
 
 /**
@@ -143,6 +149,16 @@ export const SelectInteractionSchema = z.discriminatedUnion("type", [
     externalAgentIdLabel: z.string().nullable().optional(),
   }),
   BaseSelectInteractionSchema.extend({
+    type: z.enum(["groq:chatCompletions"]),
+    request: Groq.API.ChatCompletionRequestSchema,
+    processedRequest:
+      Groq.API.ChatCompletionRequestSchema.nullable().optional(),
+    response: Groq.API.ChatCompletionResponseSchema,
+    requestType: RequestTypeSchema.optional(),
+    /** Resolved prompt name if externalAgentId matches a prompt ID */
+    externalAgentIdLabel: z.string().nullable().optional(),
+  }),
+  BaseSelectInteractionSchema.extend({
     type: z.enum(["vllm:chatCompletions"]),
     request: Vllm.API.ChatCompletionRequestSchema,
     processedRequest:
@@ -175,6 +191,16 @@ export const SelectInteractionSchema = z.discriminatedUnion("type", [
     /** Resolved prompt name if externalAgentId matches a prompt ID */
     externalAgentIdLabel: z.string().nullable().optional(),
   }),
+  BaseSelectInteractionSchema.extend({
+    type: z.enum(["minimax:chatCompletions"]),
+    request: Minimax.API.ChatCompletionRequestSchema,
+    processedRequest:
+      Minimax.API.ChatCompletionRequestSchema.nullable().optional(),
+    response: Minimax.API.ChatCompletionResponseSchema,
+    requestType: RequestTypeSchema.optional(),
+    /** Resolved prompt name if externalAgentId matches a prompt ID */
+    externalAgentIdLabel: z.string().nullable().optional(),
+  }),
 ]);
 
 export const InsertInteractionSchema = createInsertSchema(
@@ -186,7 +212,11 @@ export const InsertInteractionSchema = createInsertSchema(
     response: InteractionResponseSchema,
     toonSkipReason: ToonSkipReasonSchema.nullable().optional(),
   },
-);
+).extend({
+  // Override profileId to be required for creating interactions
+  // (it's nullable in the DB schema to preserve interactions when agents are deleted)
+  profileId: z.string().uuid(),
+});
 
 export type UserInfo = z.infer<typeof UserInfoSchema>;
 

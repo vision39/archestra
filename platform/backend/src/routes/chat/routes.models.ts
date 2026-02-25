@@ -1,4 +1,5 @@
 import {
+  MINIMAX_MODELS,
   PERPLEXITY_MODELS,
   PROVIDERS_WITH_OPTIONAL_API_KEY,
   RouteId,
@@ -305,6 +306,45 @@ async function fetchPerplexityModels(_apiKey: string): Promise<ModelInfo[]> {
 }
 
 /**
+ * Fetch models from Groq API (OpenAI-compatible)
+ * @see https://console.groq.com/docs/api-reference
+ */
+async function fetchGroqModels(apiKey: string): Promise<ModelInfo[]> {
+  const baseUrl = config.llm.groq.baseUrl;
+  const url = `${baseUrl}/models`;
+
+  const response = await fetch(url, {
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+    },
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    logger.error(
+      { status: response.status, error: errorText },
+      "Failed to fetch Groq models",
+    );
+    throw new Error(`Failed to fetch Groq models: ${response.status}`);
+  }
+
+  const data = (await response.json()) as {
+    data: Array<{
+      id: string;
+      created: number;
+      owned_by: string;
+    }>;
+  };
+
+  return data.data.map((model) => ({
+    id: model.id,
+    displayName: model.id,
+    provider: "groq" as const,
+    createdAt: new Date(model.created * 1000).toISOString(),
+  }));
+}
+
+/**
  * Fetch models from vLLM API
  * vLLM exposes an OpenAI-compatible /models endpoint
  * See: https://docs.vllm.ai/en/latest/features/openai_api.html
@@ -536,6 +576,17 @@ async function fetchZhipuaiModels(apiKey: string): Promise<ModelInfo[]> {
   return allModels;
 }
 
+async function fetchMinimaxModels(_apiKey: string): Promise<ModelInfo[]> {
+  // MiniMax does not provide a /v1/models endpoint (returns 404)
+  // Return known models directly. API key validation happens during actual chat completion requests.
+  // Model list centralized in shared/model-constants.ts (MINIMAX_MODELS).
+  return MINIMAX_MODELS.map((m) => ({
+    id: m.id,
+    displayName: m.displayName,
+    provider: "minimax" as const,
+  }));
+}
+
 /**
  * Fetch models from AWS Bedrock API
  * Uses Bearer token authentication (proxy handles AWS credentials)
@@ -760,9 +811,11 @@ async function getProviderApiKey({
     ollama: () => config.chat.ollama.apiKey || "", // Ollama typically doesn't require API keys
     openai: () => config.chat.openai.apiKey || null,
     perplexity: () => config.chat.perplexity?.apiKey || null,
+    groq: () => config.chat.groq?.apiKey || null,
     vllm: () => config.chat.vllm.apiKey || "", // vLLM typically doesn't require API keys
     zhipuai: () => config.chat.zhipuai?.apiKey || null,
     bedrock: () => config.chat.bedrock.apiKey || null,
+    minimax: () => config.chat.minimax?.apiKey || null,
   };
 
   return envApiKeyFallbacks[provider]();
@@ -780,10 +833,12 @@ const modelFetchers: Record<
   mistral: fetchMistralModels,
   openai: fetchOpenAiModels,
   perplexity: fetchPerplexityModels,
+  groq: fetchGroqModels,
   vllm: fetchVllmModels,
   ollama: fetchOllamaModels,
   cohere: fetchCohereModels,
   zhipuai: fetchZhipuaiModels,
+  minimax: fetchMinimaxModels,
 };
 
 // Register all model fetchers with the sync service
@@ -854,6 +909,7 @@ export async function fetchModelsForProvider({
         "anthropic",
         "cerebras",
         "cohere",
+        "groq",
         "mistral",
         "openai",
         "perplexity",
@@ -862,6 +918,10 @@ export async function fetchModelsForProvider({
       if (apiKey) {
         models = await modelFetchers[provider](apiKey);
       }
+    } else if (provider === "minimax") {
+      // MiniMax doesn't support /v1/models endpoint, return hardcoded models
+      // API key validation happens during actual chat requests
+      models = await modelFetchers[provider](apiKey || "EMPTY");
     } else if (provider === "gemini") {
       if (vertexAiEnabled) {
         // Use Vertex AI SDK for model listing (uses ADC for authentication)

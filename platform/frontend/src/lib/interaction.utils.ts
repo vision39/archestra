@@ -10,6 +10,8 @@ import type {
   InteractionUtils,
 } from "./llmProviders/common";
 import GeminiGenerateContentInteraction from "./llmProviders/gemini";
+import GroqChatCompletionInteraction from "./llmProviders/groq";
+import MinimaxChatCompletionInteraction from "./llmProviders/minimax";
 import MistralChatCompletionInteraction from "./llmProviders/mistral";
 import OllamaChatCompletionInteraction from "./llmProviders/ollama";
 import OpenAiChatCompletionInteraction from "./llmProviders/openai";
@@ -32,6 +34,8 @@ const interactionFactories: Record<Interaction["type"], InteractionFactory> = {
     new PerplexityChatCompletionInteraction(i),
   "vllm:chatCompletions": (i) => new VllmChatCompletionInteraction(i),
   "zhipuai:chatCompletions": (i) => new ZhipuaiChatCompletionInteraction(i),
+  "groq:chatCompletions": (i) => new GroqChatCompletionInteraction(i),
+  "minimax:chatCompletions": (i) => new MinimaxChatCompletionInteraction(i),
 };
 
 export interface CostSavingsInput {
@@ -111,7 +115,7 @@ export class DynamicInteraction implements InteractionUtils {
   private interaction: Interaction;
 
   id: string;
-  profileId: string;
+  profileId: string | null;
   externalAgentId: string | null;
   executionId: string | null;
   type: Interaction["type"];

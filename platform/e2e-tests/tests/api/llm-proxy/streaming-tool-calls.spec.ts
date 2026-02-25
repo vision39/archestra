@@ -171,6 +171,18 @@ const cerebrasConfig: StreamingToolCallTestConfig = {
   expectedToolName: "read_file",
 };
 
+const groqConfig: StreamingToolCallTestConfig = {
+  providerName: "Groq",
+  endpoint: (agentId) => `/v1/groq/${agentId}/chat/completions`,
+  headers: (wiremockStub) => ({
+    Authorization: `Bearer ${wiremockStub}`,
+    "Content-Type": "application/json",
+  }),
+  buildStreamingRequest: (content, tools) =>
+    buildOpenAIStreamingRequest("llama-3.1-8b-instant", content, tools),
+  expectedToolName: "read_file",
+};
+
 const mistralConfig: StreamingToolCallTestConfig = {
   providerName: "Mistral",
   endpoint: (agentId) => `/v1/mistral/${agentId}/chat/completions`,
@@ -223,6 +235,18 @@ const zhipuaiConfig: StreamingToolCallTestConfig = {
   expectedToolName: "read_file",
 };
 
+const minimaxConfig: StreamingToolCallTestConfig = {
+  providerName: "Minimax",
+  endpoint: (agentId) => `/v1/minimax/${agentId}/chat/completions`,
+  headers: (wiremockStub) => ({
+    Authorization: `Bearer ${wiremockStub}`,
+    "Content-Type": "application/json",
+  }),
+  buildStreamingRequest: (content, tools) =>
+    buildOpenAIStreamingRequest("MiniMax-M2.1", content, tools),
+  expectedToolName: "read_file",
+};
+
 // =============================================================================
 // Test Suite
 // =============================================================================
@@ -234,10 +258,12 @@ const testConfigsMap = {
   gemini: geminiConfig,
   cohere: cohereConfig,
   cerebras: cerebrasConfig,
+  groq: groqConfig,
   mistral: mistralConfig,
   vllm: vllmConfig,
   ollama: ollamaConfig,
   zhipuai: zhipuaiConfig,
+  minimax: minimaxConfig,
   bedrock: null, // Bedrock uses binary AWS EventStream format which cannot be mocked via WireMock SSE
   perplexity: null, // Perplexity does not support tool calling
 } satisfies Record<SupportedProvider, StreamingToolCallTestConfig | null>;

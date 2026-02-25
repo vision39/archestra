@@ -144,6 +144,26 @@ const zhipuaiConfig: ChatProviderTestConfig = {
   expectedResponse: "This is a mocked response for the chat UI e2e test.",
 };
 
+// Groq - Uses OpenAI-compatible streaming format
+const groqConfig: ChatProviderTestConfig = {
+  providerName: "groq",
+  providerDisplayName: "Groq",
+  modelId: "llama-3.1-8b-instant",
+  modelDisplayName: "llama-3.1-8b-instant",
+  wiremockStubId: "chat-ui-e2e-test",
+  expectedResponse: "This is a mocked response for the chat UI e2e test.",
+};
+
+// MiniMax - Uses OpenAI-compatible streaming format
+const minimaxConfig: ChatProviderTestConfig = {
+  providerName: "minimax",
+  providerDisplayName: "MiniMax",
+  modelId: "MiniMax-M2.1",
+  modelDisplayName: "MiniMax-M2.1",
+  wiremockStubId: "chat-ui-e2e-test",
+  expectedResponse: "This is a mocked response for the chat UI e2e test.",
+};
+
 const testConfigs: ChatProviderTestConfig[] = [
   anthropicConfig,
   openaiConfig,
@@ -152,9 +172,11 @@ const testConfigs: ChatProviderTestConfig[] = [
   cohereConfig,
   mistralConfig,
   perplexityConfig,
+  groqConfig,
   ollamaConfig,
   vllmConfig,
   zhipuaiConfig,
+  minimaxConfig,
 ];
 
 // =============================================================================
@@ -196,10 +218,12 @@ for (const config of testConfigs) {
         await page.waitForTimeout(500);
       }
 
-      // Click on the model option that contains our model ID
+      // Click on the model option that matches our exact model ID.
+      // Use parentheses to avoid matching Bedrock models whose IDs contain
+      // the same base model name (e.g. "us.anthropic.claude-3-5-sonnet-20241022-v2:0").
       const modelOption = page
         .getByRole("option")
-        .filter({ hasText: config.modelId });
+        .filter({ hasText: `(${config.modelId})` });
       await expect(modelOption.first()).toBeVisible({ timeout: 5_000 });
       await modelOption.first().click();
 
@@ -228,7 +252,8 @@ for (const config of testConfigs) {
       });
 
       // Verify the user's message also appears in the chat
-      await expect(page.getByText(testMessage)).toBeVisible();
+      // Use .first() because the message text may also appear in the sidebar title
+      await expect(page.getByText(testMessage).first()).toBeVisible();
     });
   });
 }

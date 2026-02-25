@@ -556,6 +556,10 @@ export default {
         process.env.ARCHESTRA_PERPLEXITY_BASE_URL ||
         "https://api.perplexity.ai",
     },
+    groq: {
+      baseUrl:
+        process.env.ARCHESTRA_GROQ_BASE_URL || "https://api.groq.com/openai/v1",
+    },
     vllm: {
       enabled: Boolean(process.env.ARCHESTRA_VLLM_BASE_URL),
       baseUrl: process.env.ARCHESTRA_VLLM_BASE_URL,
@@ -579,6 +583,10 @@ export default {
       inferenceProfilePrefix:
         process.env.ARCHESTRA_BEDROCK_INFERENCE_PROFILE_PREFIX || "",
     },
+    minimax: {
+      baseUrl:
+        process.env.ARCHESTRA_MINIMAX_BASE_URL || "https://api.minimax.io/v1",
+    },
   },
   chat: {
     openai: {
@@ -599,6 +607,9 @@ export default {
     perplexity: {
       apiKey: process.env.ARCHESTRA_CHAT_PERPLEXITY_API_KEY || "",
     },
+    groq: {
+      apiKey: process.env.ARCHESTRA_CHAT_GROQ_API_KEY || "",
+    },
     vllm: {
       apiKey: process.env.ARCHESTRA_CHAT_VLLM_API_KEY || "",
     },
@@ -613,6 +624,9 @@ export default {
     },
     bedrock: {
       apiKey: process.env.ARCHESTRA_CHAT_BEDROCK_API_KEY || "",
+    },
+    minimax: {
+      apiKey: process.env.ARCHESTRA_CHAT_MINIMAX_API_KEY || "",
     },
     defaultModel:
       process.env.ARCHESTRA_CHAT_DEFAULT_MODEL || "claude-opus-4-1-20250805",
@@ -647,7 +661,7 @@ export default {
     // See: https://github.com/googleapis/release-please/blob/main/docs/customizing.md#updating-arbitrary-files
     mcpServerBaseImage:
       process.env.ARCHESTRA_ORCHESTRATOR_MCP_SERVER_BASE_IMAGE ||
-      "europe-west1-docker.pkg.dev/friendly-path-465518-r6/archestra-public/mcp-server-base:1.0.48", // x-release-please-version
+      "europe-west1-docker.pkg.dev/friendly-path-465518-r6/archestra-public/mcp-server-base:1.0.49", // x-release-please-version
     kubernetes: {
       namespace: process.env.ARCHESTRA_ORCHESTRATOR_K8S_NAMESPACE || "default",
       kubeconfig: process.env.ARCHESTRA_ORCHESTRATOR_KUBECONFIG,

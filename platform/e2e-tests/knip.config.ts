@@ -8,13 +8,11 @@ const config: KnipConfig = {
     "@shared",
   ],
   ignoreBinaries: [
-    // biome is in root package.json
+    // biome and concurrently are in root package.json
     "biome",
+    "concurrently",
     // tsc is in root package.json (typescript)
     "tsc",
-    // Provided by devDependencies but knip doesn't resolve in pnpm monorepo
-    "playwright",
-    "knip",
   ],
 };
 

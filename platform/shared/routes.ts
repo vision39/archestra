@@ -179,6 +179,10 @@ export const RouteId = {
     "perplexityChatCompletionsWithDefaultAgent",
   PerplexityChatCompletionsWithAgent: "perplexityChatCompletionsWithAgent",
 
+  // Proxy Routes - Groq
+  GroqChatCompletionsWithDefaultAgent: "groqChatCompletionsWithDefaultAgent",
+  GroqChatCompletionsWithAgent: "groqChatCompletionsWithAgent",
+
   // Proxy Routes - vLLM
   VllmChatCompletionsWithDefaultAgent: "vllmChatCompletionsWithDefaultAgent",
   VllmChatCompletionsWithAgent: "vllmChatCompletionsWithAgent",
@@ -202,6 +206,11 @@ export const RouteId = {
   BedrockConverseWithAgentAndModel: "bedrockConverseWithAgentAndModel",
   BedrockConverseStreamWithAgentAndModel:
     "bedrockConverseStreamWithAgentAndModel",
+
+  // Proxy Routes - MiniMax
+  MinimaxChatCompletionsWithDefaultAgent:
+    "minimaxChatCompletionsWithDefaultAgent",
+  MinimaxChatCompletionsWithAgent: "minimaxChatCompletionsWithAgent",
 
   // Chat Routes
   StreamChat: "streamChat",
